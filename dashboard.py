@@ -14,13 +14,13 @@ track your daily water intake and receive personalized hydration analysis.""")
     
     if st.button("start tracking"):
         st.session_state.tracker_started=True
-        st.experimental_rerun()
+        st.rerun()
 
 else:
     st.title("💧 water tracker dashboard")
     st.sidebar.header("log your water intake")
     user_id=st.sidebar.text_input("USER ID",value="user_12")
-    intake_ml=st.sidebar.number_input("water intake (ml)",min_valuse=0,step=100)
+    intake_ml=st.sidebar.number_input("water intake (ml)",min_value=0,step=100)
 
     if st.sidebar.button("submit"):
         log_intake(user_id,intake_ml)
@@ -30,18 +30,21 @@ else:
         feedback=agent.analyse_intake(intake_ml)
         st.info(f"Ai feedback:{feedback}")
 
-        st.markdown("---")
-        st.header("your water intake history")
+    st.markdown("---")
+    st.header("your water intake history")
 
-        if user_id:
-            history=get_intake(user_id)
-            if history:
-                dates=[datetime.strptime(record[0],"%Y-%m-%d").date() for record in history]
-                values=[row[0] for row in history]
+    if user_id:
+        history=get_intake(user_id)
+        if history:
+            st.write(history)
+# or
+            print(history)
+            dates=[datetime.strptime(row[0], "%Y-%m-%d").date() for row in history]
+            values=[row[1] for row in history]
 
-                df=pd.DataFrame({"date":dates,"intake_ml":values})
+            df=pd.DataFrame({"data":dates,"intake_ml":values})
 
-                st.dataframe(df)
-                st.line_chart(df,x="date",y="intake_ml")
-            else:
-                st.warning(" No history found for this user.")
+            st.dataframe(df)
+            st.line_chart(df,x="data",y="intake_ml")
+        else:
+            st.warning(" No history found for this user.")

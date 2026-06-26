@@ -25,7 +25,12 @@ def log_intake(user_id,intake_ml):
 def get_intake(user_id):
     conn=sqlite3.connect(DB_NAME)
     cursor=conn.cursor()
-    cursor.execute("SELECT intake_ml FROM water_intake WHERE user_id=?", (user_id,))
+    cursor.execute("""
+        SELECT data, intake_ml
+        FROM water_intake
+        WHERE user_id=?
+        ORDER BY data
+    """, (user_id,))
     records=cursor.fetchall()
 
     conn.close()
